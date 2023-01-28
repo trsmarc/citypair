@@ -31,10 +31,13 @@ func (s flightService) GetCityPair(ctx context.Context, req *GetCityPairRequest)
 	}
 
 	pairs := make(map[string]string, len(req.Flights))
-	departures := make(map[string]bool, 0)
-	arrivals := make(map[string]bool, 0)
+	departures := make(map[string]bool, len(req.Flights))
+	arrivals := make(map[string]bool, len(req.Flights))
 
 	for _, pair := range req.Flights {
+		if len(pair) != 2 {
+			return "", "", errors.New("invalid pair input")
+		}
 		pairs[pair[0]] = pair[1]
 		departures[pair[0]] = true
 		arrivals[pair[1]] = true
