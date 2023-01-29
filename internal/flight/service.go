@@ -74,7 +74,7 @@ func (s flightService) GetCityPair(ctx context.Context, req *GetCityPairRequest)
 }
 
 type GetCityPairRequest struct {
-	Flights [][]string
+	Flights [][]string `json:"flights" validate:"min=1,dive,len=2,unique,dive,required"`
 }
 
 func (request GetCityPairRequest) Validate(validator *validator.Validate) error {
