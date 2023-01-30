@@ -19,10 +19,8 @@ type FlightServiceTestSuite struct {
 
 func (suite *FlightServiceTestSuite) SetupTest() {
 	suite.ctrl = gomock.NewController(suite.T())
-
 	logger := log.New()
 	validate := validator.New()
-
 	suite.service = flight.NewService(validate, logger)
 }
 
@@ -61,7 +59,7 @@ func (suite *FlightServiceTestSuite) TestNonConnectedFlights() {
 		Flights: [][]string{{"IND", "EWR"}, {"SFO", "ATL"}, {"ATL", "GSO"}},
 	})
 
-	suite.Error(err, "flight is not connected")
+	suite.Assert().ErrorContains(err, "flight is not connected")
 }
 
 func (suite *FlightServiceTestSuite) TestCirculateFlights() {
@@ -69,7 +67,56 @@ func (suite *FlightServiceTestSuite) TestCirculateFlights() {
 		Flights: [][]string{{"IND", "EWR"}, {"EWR", "ATL"}, {"GSO", "IND"}, {"ATL", "GSO"}},
 	})
 
-	suite.Error(err, "circulate flight")
+	suite.Assert().ErrorContains(err, "circulate flight")
+}
+
+func (suite *FlightServiceTestSuite) TestInputValidation() {
+	{
+
+		cases := []struct {
+			name    string
+			input   [][]string
+			errMsg  string
+			wantErr bool
+		}{
+			{
+				name:    "valid input",
+				input:   [][]string{{"IND", "EWR"}, {"SFO", "ATL"}, {"GSO", "IND"}, {"ATL", "GSO"}},
+				wantErr: false,
+			},
+			{
+				name:    "invalid len",
+				input:   [][]string{{"IND"}},
+				errMsg:  "Field validation for 'Flights[0]' failed on the 'len' tag",
+				wantErr: true,
+			},
+			{
+				name:    "minimum 1 flight",
+				input:   [][]string{},
+				errMsg:  "Field validation for 'Flights' failed on the 'min' tag",
+				wantErr: true,
+			},
+			{
+				name:    "duplicated city",
+				input:   [][]string{{"IND", "IND"}},
+				errMsg:  "Field validation for 'Flights[0]' failed on the 'unique' tag",
+				wantErr: true,
+			},
+		}
+
+		for _, c := range cases {
+			_, _, err := suite.service.GetCityPair(context.Background(), &flight.GetCityPairRequest{
+				Flights: c.input,
+			})
+
+			if c.wantErr {
+				suite.Assert().ErrorContains(err, c.errMsg)
+			} else {
+				suite.NoError(err)
+			}
+		}
+
+	}
 }
 
 func TestFlightServiceTestSuite(t *testing.T) {
