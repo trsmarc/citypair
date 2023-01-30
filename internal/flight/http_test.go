@@ -39,7 +39,7 @@ func (suite *FlightHttpTestSuite) TestGetCityPair() {
 	suite.Assert().Equalf(200, resp.StatusCode, "Expected status code: 200, got: %d", resp.StatusCode)
 	suite.Assert().Containsf(resp.Header.Get("Content-Type"), "application/json", "Invalid content type, expected application/json, got %s", resp.Header.Get("Content-Type"))
 	suite.Assert().NotEmpty(body)
-	suite.Assert().Equal(body, "\"[FOO, BAR]\"\n")
+	suite.Assert().Contains(body, `{"result":["FOO","BAR"]}`)
 }
 
 func TestFlightHttpTestSuite(t *testing.T) {

@@ -7,10 +7,14 @@ import (
 	"github.com/go-chi/render"
 )
 
+type HealthCheck struct {
+	Status string `json:"status"`
+}
+
 func RegisterHandlers(r chi.Router) {
 	r.Get("/health", Check)
 }
 
 func Check(w http.ResponseWriter, r *http.Request) {
-	render.Respond(w, r, "passed")
+	render.JSON(w, r, &HealthCheck{Status: "Passed"})
 }

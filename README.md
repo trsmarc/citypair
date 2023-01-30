@@ -34,7 +34,7 @@ Calculate city pair from input flights array
 
 > | http code | content-type               | response                                 |
 > | --------- | -------------------------- | ---------------------------------------- |
-> | `200`     | `text/plain;charset=UTF-8` | `["SFO", "EWR"]`                         |
+> | `200`     | `text/plain;charset=UTF-8` | `{result: ["SFO", "EWR"]}`                         |
 > | `400`     | `application/json`         | `{"code":"400","message":"Bad Request"}` |
 > | `405`     | `text/html;charset=utf-8`  | None                                     |
 
@@ -106,6 +106,10 @@ Below are the steps if you want to run locally without docker
    --data-raw '{
        "flights": [["IND", "EWR"], ["SFO", "ATL"], ["GSO", "IND"], ["ATL", "GSO"]]
    }'
+   ```
+   response:
+   ```
+   {result: ["SFO", "EWR"]}
    ```
 
 ### Run Test

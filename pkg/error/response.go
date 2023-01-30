@@ -10,7 +10,7 @@ import (
 
 type ErrResponse struct {
 	Err            error                       `json:"-"`               // low-level runtime error
-	HTTPStatusCode int                         `json:"-"`               // http response status code
+	HTTPStatusCode int                         `json:"status"`          // http response status code
 	Message        string                      `json:"error,omitempty"` // application-level error message, for debugging
 	ValidationErr  []formatter.ValidationError `json:"validation_error,omitempty"`
 }
@@ -22,7 +22,7 @@ func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 
 func InvalidParameter(err error, msg string) *ErrResponse {
 	if msg == "" {
-		msg = "Invalid parameter"
+		msg = "invalid parameter"
 	}
 	return &ErrResponse{
 		HTTPStatusCode: http.StatusBadRequest,
@@ -42,6 +42,7 @@ func BadRequest(err error, msg string) *ErrResponse {
 	}
 
 	if v, ok := err.(validator.ValidationErrors); ok {
+		response.Message = "failed input validation"
 		response.ValidationErr = formatter.DescribeValidationError(v)
 	}
 

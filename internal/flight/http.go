@@ -2,7 +2,6 @@ package flight
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -54,12 +53,12 @@ func (h flightHTTP) GetCityPair(w http.ResponseWriter, r *http.Request) {
 	src, dest, err := h.srv.GetCityPair(r.Context(), request)
 	if err != nil {
 		h.Logger.With(r.Context()).Errorf("get city pair error : %s", err)
-		if err = render.Render(w, r, e.BadRequest(err, "bad request")); err != nil {
+		if err = render.Render(w, r, e.BadRequest(err, err.Error())); err != nil {
 			h.Logger.With(r.Context()).Errorf("unable to render payload : %s", err)
 			return
 		}
 		return
 	}
 
-	render.Respond(w, r, fmt.Sprintf("[%s, %s]", src, dest))
+	render.JSON(w, r, &GetCityPairResponse{Result: []string{src, dest}})
 }
