@@ -77,6 +77,6 @@ type GetCityPairRequest struct {
 	Flights [][]string `json:"flights" validate:"min=1,dive,len=2,unique,dive,required"`
 }
 
-func (request GetCityPairRequest) Validate(validator *validator.Validate) error {
-	return validator.Struct(request)
+func (r *GetCityPairRequest) Validate(validator *validator.Validate) error {
+	return validator.Struct(r)
 }
