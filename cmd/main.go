@@ -13,7 +13,7 @@ import (
 )
 
 var Version = "1.0.0"
-var configPath = flag.String("config", "./config/local.yaml", "path to the config file")
+var configPath = flag.String("config", "../config/local.yaml", "path to the config file")
 
 func main() {
 	if err := run(); err != nil {
